@@ -43,8 +43,8 @@ rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/opt/cpanel/ea-modsec30-connector-apache24
 # TODO: mkdir -p $RPM_BUILD_ROOT/etc/nginx/conf.d/modules
 
-mkdir -p $RPM_BUILD_ROOT/etc/nginx/conf.d/modsec_vendor_configs
-mkdir -p $RPM_BUILD_ROOT/var/log/nginx/modsec30_audit
+mkdir -p $RPM_BUILD_ROOT/etc/apache2/conf.d/modsec_vendor_configs
+mkdir -p $RPM_BUILD_ROOT/var/log/apache2/modsec30_audit
 
 /bin/cp -rf ./* $RPM_BUILD_ROOT/opt/cpanel/ea-modsec30-connector-apache24
 # TODO: /bin/cp -rf %{SOURCE1} $RPM_BUILD_ROOT/etc/nginx/conf.d/modules/ngx_http_modsecurity_module.conf
