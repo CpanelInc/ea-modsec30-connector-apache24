@@ -24,7 +24,8 @@ AutoReq:   no
 
 BuildRequires: ea-modsec30
 
-Requires: ea-modsec30 # TODO: this was for config gen: ea-nginx >= 1.19.1-9
+Requires: ea-modsec30
+# TODO: this was for config gen: Requires: ea-nginx >= 1.19.1-9
 
 %description
 
