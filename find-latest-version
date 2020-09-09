@@ -4,7 +4,7 @@
 # copyright@cpanel.net                                         http://cpanel.net
 # This code is subject to the cPanel license. Unauthorized copying is prohibited
 
-package ea_repo_name_goes_here::find_latest_version;
+package ea_mod_security30_connector_apache24::find_latest_version;
 
 use strict;
 use warnings;
@@ -12,26 +12,33 @@ use warnings;
 use lib "../ea-tools/lib/ea4_tool";    # assumes ea-tools is checked out next to this repo
 use ea4_tool::util ();
 
-ea4_tool::util::find_latest_version(\&_get_required, \&_add_sum) if !caller();
+ea4_tool::util::find_latest_version( \&_get_required, \&_add_sum ) if !caller();
 
 ###############
 #### helpers ##
 ###############
 
 sub _get_required {
-   my ($http) = @_;
+    my ($http) = @_;
 
-   my ( $version, $url, $name );
+    my $res = $http->get("https://api.github.com/repos/SpiderLabs/ModSecurity-apache/releases");
+    if ( !$res->{success} ) {
+        die "Could not GET ModSecurity info from github ($res->{status} $res->{reason})\n\t Throttled? `curl -I https://api.github.com/rate_limit 2>&1 | grep ^X-RateLimit`\n";
+    }
 
-   my $res  = $http->get("https://repo.example.org/releases");
-   # get $version, $url, $name from $res (and possibly multiple HTTP calls)
-   # die if there is a problem determining any of those values
+    # get $version, $url, $name from $res
+    my ($version) = sort { $b cmp $a } map { $_->{tag_name} } @{ Cpanel::JSON::Load( $res->{content} ) };
+    die "Could not determine version from github\n" if !$version;
 
-   return ( $version, $url, $name );
+    my $name = "$version.tar.gz";
+    my $url  = "https://github.com/SpiderLabs/ModSecurity-apache/archive/$name";
+    $version =~ s/^v//;
+
+    return ( $version, $url, $name );
 }
 
 sub _add_sum {
-    my ($http, $hr) = @_;
+    my ( $http, $hr ) = @_;
 
     # Optional: Set $hr->{tarball}{sum}{hex} and $hr->{tarball}{sum}{type} (sha256, sha1, md5, anythign Digest.pm can handle)
     #           die if there is a problem determining either of those values
@@ -46,4 +53,12 @@ __END__
 
 =head1 README
 
-… explain nuances of fetching the latest-info for this repo here for future us …
+We can add checksum support if github releases had that information which isn’t available via:
+
+=over
+
+=item API call L<https://developer.github.com/v3/repos/releases/#get-the-latest-release>
+
+=item web view L<https://github.com/SpiderLabs/ModSecurity-apache/releases>
+
+=back
