@@ -13,20 +13,16 @@ License: Apache v2
 URL: https://github.com/SpiderLabs/ModSecurity-apache
 
 Source0: %{version}.tar.gz
-# TODO: Source1: ngx_http_modsecurity_module.conf
-# TODO: Source2: modsec30.conf
-# TODO: Source3: modsec30.cpanel.conf
-# TODO: Source4: modsec30.cpanel.conf-generate
-# TODO: Source5: modsec30.cpanel.conf.tt
-# TODO: Source6: modsec30.user.conf
+Source1: 800-mod_security30.conf
+Source2: modsec30.conf
+Source3: modsec2.cpanel.conf
+Source4: modsec2.user.conf
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 AutoReq:   no
 
 BuildRequires: ea-modsec30
-
 Requires: ea-modsec30
-# TODO: this was for config gen: Requires: ea-nginx >= 1.19.1-9
 
 %description
 
@@ -40,43 +36,36 @@ The ModSecurity-apache connector is the connection point between
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/opt/cpanel/ea-modsec30-connector-apache24
-# TODO: mkdir -p $RPM_BUILD_ROOT/etc/nginx/conf.d/modules
+mkdir -p $RPM_BUILD_ROOT/etc/apache2/conf.modules.d
+/bin/cp -rf %{SOURCE1} $RPM_BUILD_ROOT/etc/apache2/conf.modules.d/800-mod_security30.conf
 
+# For now, use modsec 2 paths since WHM hardcodes them,
+#   details at https://enterprise.cpanel.net/projects/EA4/repos/ea-modsec31/browse/DESIGN.md
 mkdir -p $RPM_BUILD_ROOT/etc/apache2/conf.d/modsec_vendor_configs
-mkdir -p $RPM_BUILD_ROOT/var/log/apache2/modsec30_audit
-
-/bin/cp -rf ./* $RPM_BUILD_ROOT/opt/cpanel/ea-modsec30-connector-apache24
-# TODO: /bin/cp -rf %{SOURCE1} $RPM_BUILD_ROOT/etc/nginx/conf.d/modules/ngx_http_modsecurity_module.conf
-
-# TODO: mkdir -p $RPM_BUILD_ROOT/etc/nginx/conf.d/modsec
-# TODO: mkdir -p $RPM_BUILD_ROOT/etc/nginx/ea-nginx/config-scripts/global/
-# TODO: /bin/cp -rf %{SOURCE2} $RPM_BUILD_ROOT/etc/nginx/conf.d/modsec30.conf
-# TODO: /bin/cp -rf %{SOURCE3} $RPM_BUILD_ROOT/etc/nginx/conf.d/modsec/modsec30.cpanel.conf
-# TODO: /bin/cp -rf %{SOURCE4} $RPM_BUILD_ROOT/etc/nginx/ea-nginx/config-scripts/global/modsec30.cpanel.conf-generate
-# TODO: /bin/cp -rf %{SOURCE5} $RPM_BUILD_ROOT/etc/nginx/ea-nginx/modsec30.cpanel.conf.tt
-# TODO: /bin/cp -rf %{SOURCE6} $RPM_BUILD_ROOT/etc/nginx/conf.d/modsec/modsec30.user.conf
+mkdir -p $RPM_BUILD_ROOT/var/log/apache2/modsec_audit
+/bin/cp -rf %{SOURCE2} $RPM_BUILD_ROOT/etc/apache2/conf.d/modsec30.conf
+/bin/cp -rf %{SOURCE3} $RPM_BUILD_ROOT/etc/apache2/conf.d/modsec/modsec2.cpanel.conf
+/bin/cp -rf %{SOURCE4} $RPM_BUILD_ROOT/etc/apache2/conf.d/modsec/modsec2.user.conf
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %post
 
-# TODO: /etc/nginx/ea-apache24/config-scripts/global/modsec30.cpanel.conf-generate
+/usr/local/cpanel/3rdparty/bin/perl -MWhostmgr::ModSecurity::ModsecCpanelConf -e 'Whostmgr::ModSecurity::ModsecCpanelConf->new->manipulate(sub {})'
 
 %files
 %defattr(-, root, root, -)
-/opt/cpanel/ea-modsec30-connector-apache24
-# TODO: /etc/nginx/conf.d/modules/ngx_http_modsecurity_module.conf
+/etc/apache2/conf.modules.d/800-mod_security30.conf
 %attr(0755 root root) %dir /etc/apache2/conf.d/modsec_vendor_configs
-%attr(1733 root root) %dir /var/log/apache2/modsec30_audit
+%attr(1733 root root) %dir /var/log/apache2/modsec_audit
 
 # Don't make modsec30.conf a config file, we need to ensure we own this and can fix as needed
-# TODO: %attr(0600,root,root) /etc/apache2/conf.d/modsec30.conf
-# TODO: %attr(0600,root,root) %config(noreplace) /etc/apache2/conf.d/modsec/modsec30.cpanel.conf
-# TODO: %attr(0755 root root) /etc/nginx/ea-nginx/config-scripts/global/modsec30.cpanel.conf-generate
-# TODO: /etc/nginx/ea-nginx/modsec30.cpanel.conf.tt
-# TODO: %attr(0600,root,root) %config(noreplace) /etc/nginx/conf.d/modsec/modsec30.user.conf
+# For now, use modsec 2 paths since WHM hardcodes them,
+#   details at https://enterprise.cpanel.net/projects/EA4/repos/ea-modsec31/browse/DESIGN.md
+%attr(0600,root,root) /etc/apache2/conf.d/modsec30.conf
+%attr(0600,root,root) %config(noreplace) /etc/apache2/conf.d/modsec/modsec2.cpanel.conf
+%attr(0600,root,root) %config(noreplace) /etc/nginx/conf.d/modsec/modsec2.user.conf
 
 %changelog
 * Tue Aug 18 2020 Daniel Muey <dan@cpanel.net> - 0.0.9beta1-1
