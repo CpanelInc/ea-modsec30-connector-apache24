@@ -1,0 +1,37 @@
+From 2ac060550f5183fd7168acc51dd765e97c57a2da Mon Sep 17 00:00:00 2001
+From: Daniel Muey <dan@cpanel.net>
+Date: Wed, 9 Sep 2020 10:23:58 -0500
+Subject: [PATCH] Fix `--with-libmodsecurity`
+
+---
+ build/find_libmodsec.m4 | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/build/find_libmodsec.m4 b/build/find_libmodsec.m4
+index 2a6c82d..bf60f8b 100644
+--- a/build/find_libmodsec.m4
++++ b/build/find_libmodsec.m4
+@@ -27,9 +27,19 @@ if test -z "$V3PATH"; then
+       V3INCLUDE="$i/include/"
+       # TODO: test if V3LIB is set
+       break
+-    fi  
++    fi
+   done
++else
++    if test -f "$V3PATH/lib/libmodsecurity.so"; then
++      V3LIB="$V3PATH/lib/"
++    fi
++    if test -f "$V3PATH/include/modsecurity/modsecurity.h"; then
++      V3INCLUDE="$V3PATH/include/"
++      # TODO: test if V3LIB is set
++      break
++    fi
+ fi
++
+ if test -n "$V3LIB" -a "$V3LIB" != "no" -a -x "$V3LIB" ; then
+     AC_MSG_NOTICE(found libmodsecurity at $V3LIB)
+ else
+-- 
+2.25.1
+
