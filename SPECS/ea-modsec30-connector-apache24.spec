@@ -2,6 +2,7 @@
 
 Name: ea-modsec30-connector-apache24
 Summary: Apache 2.4 connector for ModSecurity v3.0
+# the path in %setup needs manually updated since it has a hyphen, should go away once its not alpha/beta
 Version: 0.0.9beta1
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4544 for more details
 %define release_prefix 1
@@ -33,7 +34,7 @@ The ModSecurity-apache connector is the connection point between
  Apache 2.4 and libmodsecurity (ModSecurity v3).
 
 %prep
-%setup -q -n ModSecurity-apache-%{version}
+%setup -q -n ModSecurity-apache-0.0.9-beta1
 
 %build
 
