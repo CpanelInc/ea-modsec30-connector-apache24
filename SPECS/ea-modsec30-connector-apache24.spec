@@ -2,7 +2,7 @@
 
 Name: ea-modsec30-connector-apache24
 Summary: Apache 2.4 connector for ModSecurity v3.0
-Version: 0.0.9-beta1
+Version: 0.0.9beta1
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4544 for more details
 %define release_prefix 1
 Release: %{release_prefix}%{?dist}.cpanel
@@ -77,6 +77,6 @@ rm -rf $RPM_BUILD_ROOT
 # TODO: %attr(0600,root,root) %config(noreplace) /etc/nginx/conf.d/modsec/modsec30.user.conf
 
 %changelog
-* Tue Aug 18 2020 Daniel Muey <dan@cpanel.net> - 1.0.1-1
+* Tue Aug 18 2020 Daniel Muey <dan@cpanel.net> - 0.0.9beta1-1
 - ZC-7367: initial release
 

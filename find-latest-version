@@ -33,6 +33,7 @@ sub _get_required {
     my $name = "$version.tar.gz";
     my $url  = "https://github.com/SpiderLabs/ModSecurity-apache/archive/$name";
     $version =~ s/^v//;
+    $version =~ s/-//;
 
     return ( $version, $url, $name );
 }
