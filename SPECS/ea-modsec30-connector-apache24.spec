@@ -11,7 +11,7 @@ Group: System Environment/Libraries
 License: Apache v2
 URL: https://github.com/SpiderLabs/ModSecurity-apache
 
-Source0: https://github.com/SpiderLabs/ModSecurity-apache/archive/v%{version}.tar.gz
+Source0: %{version}.tar.gz
 # TODO: Source1: ngx_http_modsecurity_module.conf
 # TODO: Source2: modsec30.conf
 # TODO: Source3: modsec30.cpanel.conf
