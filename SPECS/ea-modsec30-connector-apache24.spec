@@ -17,6 +17,7 @@ Source1: 800-mod_security30.conf
 Source2: modsec30.conf
 Source3: modsec2.cpanel.conf
 Source4: modsec2.user.conf
+Source5: modsec30.cpanel.conf.tt
 
 Patch0: 0001-Fix-with-libmodsecurity.patch
 
@@ -70,10 +71,12 @@ mkdir -p $RPM_BUILD_ROOT/etc/apache2/conf.modules.d
 #   details at https://enterprise.cpanel.net/projects/EA4/repos/ea-modsec31/browse/DESIGN.md
 mkdir -p $RPM_BUILD_ROOT/etc/apache2/conf.d/modsec_vendor_configs
 mkdir -p $RPM_BUILD_ROOT/etc/apache2/conf.d/modsec
+mkdir -p $RPM_BUILD_ROOT/var/cpanel/templates/apache2_4
 mkdir -p $RPM_BUILD_ROOT/var/log/apache2/modsec_audit
 /bin/cp -rf %{SOURCE2} $RPM_BUILD_ROOT/etc/apache2/conf.d/modsec30.conf
 /bin/cp -rf %{SOURCE3} $RPM_BUILD_ROOT/etc/apache2/conf.d/modsec/modsec2.cpanel.conf
 /bin/cp -rf %{SOURCE4} $RPM_BUILD_ROOT/etc/apache2/conf.d/modsec/modsec2.user.conf
+/bin/cp -rf %{SOURCE5} $RPM_BUILD_ROOT/var/cpanel/templates/apache2_4/modsec.cpanel.conf.tt
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -85,6 +88,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-, root, root, -)
 /etc/apache2/conf.modules.d/800-mod_security30.conf
+/var/cpanel/templates/apache2_4/modsec.cpanel.conf.tt
 %attr(0755 root root) /etc/apache2/modules/mod_security3.so
 %attr(0755 root root) %dir /etc/apache2/conf.d/modsec_vendor_configs
 %attr(1733 root root) %dir /var/log/apache2/modsec_audit
