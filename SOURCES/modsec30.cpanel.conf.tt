@@ -24,7 +24,7 @@
 ##
 
 [% FOREACH directive IN data.manageable_directives -%]
-[% IF directive.match('^(?:SecConnEngine|SecDisableBackendCompression|SecGuardianLog|SecGsbLookupDb)$') -%]
+[% IF directive.0.match('^(?:SecConnEngine|SecDisableBackendCompression|SecGuardianLog|SecGsbLookupDb)$') -%]
 # Mod Sec 3.0 Apache connector does not support [% directive.shift %] (current value: [% directive.shift %])
 [% ELSE -%]
 modsecurity_rules '[% directive.shift %] [% directive.shift %]'
