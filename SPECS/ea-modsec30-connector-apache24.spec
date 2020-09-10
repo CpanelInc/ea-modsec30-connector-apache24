@@ -5,7 +5,7 @@ Summary: Apache 2.4 connector for ModSecurity v3.0
 # the path in %setup needs manually updated since it has a hyphen, should go away once its not alpha/beta
 Version: 0.0.9beta1
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4544 for more details
-%define release_prefix 1
+%define release_prefix 2
 Release: %{release_prefix}%{?dist}.cpanel
 Vendor: cPanel, Inc.
 Group: System Environment/Libraries
@@ -101,6 +101,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0600,root,root) %config(noreplace) /etc/apache2/conf.d/modsec/modsec2.user.conf
 
 %changelog
+* Thu Sep 10 2020 Daniel Muey <dan@cpanel.net> - 0.0.9beta1-2
+- ZC-7444: Remove unsupported `SecGsbLookupDb` and `SecGuardianLog` from config
+
 * Tue Aug 18 2020 Daniel Muey <dan@cpanel.net> - 0.0.9beta1-1
 - ZC-7367: initial release
 
