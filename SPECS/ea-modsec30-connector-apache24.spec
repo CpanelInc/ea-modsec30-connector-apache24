@@ -102,7 +102,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Mon Sep 28 2020 Daniel Muey <dan@cpanel.net> - 0.0.9beta1-3
-- ZC-7633: Ensure modsec2.cpanel.conf is built after teplate is installed
+- ZC-7633: Ensure modsec2.cpanel.conf is built after template is installed
 
 * Thu Sep 10 2020 Daniel Muey <dan@cpanel.net> - 0.0.9beta1-2
 - ZC-7444: Remove unsupported `SecGsbLookupDb` and `SecGuardianLog` from config
