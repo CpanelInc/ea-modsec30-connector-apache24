@@ -5,7 +5,7 @@ Summary: Apache 2.4 connector for ModSecurity v3.0
 # the path in %setup needs manually updated since it has a hyphen, should go away once its not alpha/beta
 Version: 0.0.9beta1
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4544 for more details
-%define release_prefix 2
+%define release_prefix 3
 Release: %{release_prefix}%{?dist}.cpanel
 Vendor: cPanel, Inc.
 Group: System Environment/Libraries
@@ -81,7 +81,7 @@ mkdir -p $RPM_BUILD_ROOT/var/log/apache2/modsec_audit
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post
+%posttrans
 
 /usr/local/cpanel/3rdparty/bin/perl -MWhostmgr::ModSecurity::ModsecCpanelConf -e 'Whostmgr::ModSecurity::ModsecCpanelConf->new->manipulate(sub {})'
 
@@ -101,6 +101,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0600,root,root) %config(noreplace) /etc/apache2/conf.d/modsec/modsec2.user.conf
 
 %changelog
+* Mon Sep 28 2020 Daniel Muey <dan@cpanel.net> - 0.0.9beta1-3
+- ZC-7633: Ensure modsec2.cpanel.conf is built after teplate is installed
+
 * Thu Sep 10 2020 Daniel Muey <dan@cpanel.net> - 0.0.9beta1-2
 - ZC-7444: Remove unsupported `SecGsbLookupDb` and `SecGuardianLog` from config
 
