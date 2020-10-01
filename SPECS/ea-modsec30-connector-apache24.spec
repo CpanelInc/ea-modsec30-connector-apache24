@@ -1,11 +1,11 @@
 %define debug_package %{nil}
 
 Name: ea-modsec30-connector-apache24
-Summary: Apache 2.4 connector for ModSecurity v3.0
+Summary: WARNING: cPanel v92 or later ONLY - Apache 2.4 connector for ModSecurity v3.0
 # the path in %setup needs manually updated since it has a hyphen, should go away once its not alpha/beta
 Version: 0.0.9beta1
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4544 for more details
-%define release_prefix 3
+%define release_prefix 4
 Release: %{release_prefix}%{?dist}.cpanel
 Vendor: cPanel, Inc.
 Group: System Environment/Libraries
@@ -101,6 +101,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0600,root,root) %config(noreplace) /etc/apache2/conf.d/modsec/modsec2.user.conf
 
 %changelog
+* Thu Oct 01 2020 Daniel Muey <dan@cpanel.net> - 0.0.9beta1-4
+- ZC-7679: Add v92 warning to summary
+
 * Mon Sep 28 2020 Daniel Muey <dan@cpanel.net> - 0.0.9beta1-3
 - ZC-7633: Ensure modsec2.cpanel.conf is built after template is installed
 
