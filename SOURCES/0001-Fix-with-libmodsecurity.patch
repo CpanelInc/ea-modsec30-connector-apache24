@@ -1,7 +1,7 @@
-From 2ac060550f5183fd7168acc51dd765e97c57a2da Mon Sep 17 00:00:00 2001
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Daniel Muey <dan@cpanel.net>
 Date: Wed, 9 Sep 2020 10:23:58 -0500
-Subject: [PATCH] Fix `--with-libmodsecurity`
+Subject: [PATCH 1/2] Fix `--with-libmodsecurity`
 
 ---
  build/find_libmodsec.m4 | 12 +++++++++++-
@@ -32,6 +32,3 @@ index 2a6c82d..bf60f8b 100644
  if test -n "$V3LIB" -a "$V3LIB" != "no" -a -x "$V3LIB" ; then
      AC_MSG_NOTICE(found libmodsecurity at $V3LIB)
  else
--- 
-2.25.1
-

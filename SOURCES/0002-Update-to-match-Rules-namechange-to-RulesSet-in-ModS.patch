@@ -1,0 +1,46 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Travis Holloway <t.holloway@cpanel.net>
+Date: Thu, 21 Oct 2021 20:06:32 +0000
+Subject: [PATCH 2/2] Update to match Rules namechange to RulesSet in
+ ModSecurity 3.0.5
+
+---
+ src/mod_security3.c | 2 +-
+ src/mod_security3.h | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/mod_security3.c b/src/mod_security3.c
+index 587edcb..3ffdecc 100644
+--- a/src/mod_security3.c
++++ b/src/mod_security3.c
+@@ -141,7 +141,7 @@ static msc_t *create_tx_context(request_rec *r) {
+     }
+ 
+     msr->r = r;
+-    msr->t = msc_new_transaction(msc_apache->modsec, (Rules *)z->rules_set, (void *)r);
++    msr->t = msc_new_transaction(msc_apache->modsec, (RulesSet *)z->rules_set, (void *)r);
+ 
+     store_tx_context(msr, r);
+ 
+diff --git a/src/mod_security3.h b/src/mod_security3.h
+index 258d4eb..8cac5b9 100644
+--- a/src/mod_security3.h
++++ b/src/mod_security3.h
+@@ -3,7 +3,7 @@
+ #include <ctype.h>
+ 
+ #include <modsecurity/modsecurity.h>
+-#include <modsecurity/rules.h>
++#include <modsecurity/rules_set.h>
+ #include <modsecurity/intervention.h>
+ 
+ #include "apr_buckets.h"
+@@ -46,7 +46,7 @@ typedef struct
+ 
+ typedef struct
+ {
+-    Rules *rules_set;
++    RulesSet *rules_set;
+     int msc_state;
+     char *name_for_debug;
+ } msc_conf_t;
