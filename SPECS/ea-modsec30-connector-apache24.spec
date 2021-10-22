@@ -5,7 +5,7 @@ Summary: WARNING: cPanel v92 or later ONLY - Apache 2.4 connector for ModSecurit
 # the path in %setup needs manually updated since it has a hyphen, should go away once its not alpha/beta
 Version: 0.0.9beta1
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4544 for more details
-%define release_prefix 5
+%define release_prefix 6
 Release: %{release_prefix}%{?dist}.cpanel
 Vendor: cPanel, Inc.
 Group: System Environment/Libraries
@@ -20,6 +20,7 @@ Source4: modsec2.user.conf
 Source5: modsec30.cpanel.conf.tt
 
 Patch0: 0001-Fix-with-libmodsecurity.patch
+Patch1: 0002-Update-to-match-Rules-namechange-to-RulesSet-in-ModS.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 AutoReq:   no
@@ -45,6 +46,7 @@ The ModSecurity-apache connector is the connection point between
 %setup -q -n ModSecurity-apache-0.0.9-beta1
 
 %patch0 -p1 -b .fix-with-libmodsecurity
+%patch1 -p1 -b .update-for-rules-namechange
 
 %build
 
@@ -101,6 +103,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0600,root,root) %config(noreplace) /etc/apache2/conf.d/modsec/modsec2.user.conf
 
 %changelog
+* Thu Oct 21 2021 Travis Holloway <t.holloway@cpanel.net> - 0.0.9beta1-6
+- EA-10202: Add patch for rules name change in ModSecurity v3.0.5
+
 * Wed Mar 17 2021 Tim Mullin <tim@cpanel.net> - 0.0.9beta1-5
 - EA-9421: Set SecRequestBodyLimitAction to ProcessPartial
 
