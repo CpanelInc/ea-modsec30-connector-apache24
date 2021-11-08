@@ -5,7 +5,7 @@ Summary: WARNING: cPanel v92 or later ONLY - Apache 2.4 connector for ModSecurit
 # the path in %setup needs manually updated since it has a hyphen, should go away once its not alpha/beta
 Version: 0.0.9beta1
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4544 for more details
-%define release_prefix 6
+%define release_prefix 7
 Release: %{release_prefix}%{?dist}.cpanel
 Vendor: cPanel, Inc.
 Group: System Environment/Libraries
@@ -17,7 +17,6 @@ Source1: 800-mod_security30.conf
 Source2: modsec30.conf
 Source3: modsec2.cpanel.conf
 Source4: modsec2.user.conf
-Source5: modsec30.cpanel.conf.tt
 
 Patch0: 0001-Fix-with-libmodsecurity.patch
 Patch1: 0002-Update-to-match-Rules-namechange-to-RulesSet-in-ModS.patch
@@ -78,7 +77,6 @@ mkdir -p $RPM_BUILD_ROOT/var/log/apache2/modsec_audit
 /bin/cp -rf %{SOURCE2} $RPM_BUILD_ROOT/etc/apache2/conf.d/modsec30.conf
 /bin/cp -rf %{SOURCE3} $RPM_BUILD_ROOT/etc/apache2/conf.d/modsec/modsec2.cpanel.conf
 /bin/cp -rf %{SOURCE4} $RPM_BUILD_ROOT/etc/apache2/conf.d/modsec/modsec2.user.conf
-/bin/cp -rf %{SOURCE5} $RPM_BUILD_ROOT/var/cpanel/templates/apache2_4/modsec.cpanel.conf.tt
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -90,7 +88,6 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-, root, root, -)
 /etc/apache2/conf.modules.d/800-mod_security30.conf
-/var/cpanel/templates/apache2_4/modsec.cpanel.conf.tt
 %attr(0755 root root) /etc/apache2/modules/mod_security3.so
 %attr(0755 root root) %dir /etc/apache2/conf.d/modsec_vendor_configs
 %attr(1733 root root) %dir /var/log/apache2/modsec_audit
@@ -103,6 +100,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0600,root,root) %config(noreplace) /etc/apache2/conf.d/modsec/modsec2.user.conf
 
 %changelog
+* Tue Nov 02 2021 Julian Brown <julian.brown@cpanel.net> - 0.0.9beta1-7
+- ZC-9451: Move modsec30 template to ea-modsec30
+
 * Thu Oct 21 2021 Travis Holloway <t.holloway@cpanel.net> - 0.0.9beta1-6
 - EA-10202: Add patch for rules name change in ModSecurity v3.0.5
 
