@@ -1,7 +1,7 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: Travis Holloway <t.holloway@cpanel.net>
 Date: Thu, 21 Oct 2021 20:06:32 +0000
-Subject: [PATCH 2/2] Update to match Rules namechange to RulesSet in
+Subject: [PATCH 2/3] Update to match Rules namechange to RulesSet in
  ModSecurity 3.0.5
 
 ---
