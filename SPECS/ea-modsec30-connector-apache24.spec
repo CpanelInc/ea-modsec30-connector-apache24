@@ -5,7 +5,7 @@ Summary: WARNING: cPanel v92 or later ONLY - Apache 2.4 connector for ModSecurit
 # the path in %setup needs manually updated since it has a hyphen, should go away once its not alpha/beta
 Version: 0.0.9beta1
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4544 for more details
-%define release_prefix 9
+%define release_prefix 10
 Release: %{release_prefix}%{?dist}.cpanel
 Vendor: cPanel, Inc.
 Group: System Environment/Libraries
@@ -53,6 +53,11 @@ The ModSecurity-apache connector is the connection point between
 
 # TODO: ZC-7519
 # export LDFLAGS="-L/opt/cpanel/libcurl/lib64/ -L/opt/cpanel/ea-libxml2/lib64/"
+
+export LDFLAGS="$LDFLAGS \
+    -Wl,--enable-new-dtags \
+    -Wl,-rpath,/opt/cpanel/ea-libxml2/lib \
+    -Wl,-rpath,/opt/cpanel/ea-libxml2/lib64"
 
 ./autogen.sh
 ./configure --with-libmodsecurity=/opt/cpanel/ea-modsec30
@@ -102,6 +107,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0600,root,root) %config(noreplace) /etc/apache2/conf.d/modsec/modsec2.user.conf
 
 %changelog
+* Mon Nov 03 2025 Chris Castillo <chris.castillo@webpros.com> - 0.0.9beta1-10
+- EA4-163: Fix libxml2 library linking issues
+
 * Wed Mar 16 2022 Travis Holloway <t.holloway@cpanel.net> - 0.0.9beta1-9
 - EA-10429: Add patch to send appropriate protocol modsec30
 
