@@ -5,7 +5,7 @@ Summary: WARNING: cPanel v92 or later ONLY - Apache 2.4 connector for ModSecurit
 # the path in %setup needs manually updated since it has a hyphen, should go away once its not alpha/beta
 Version: 0.0.9beta1
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4544 for more details
-%define release_prefix 10
+%define release_prefix 11
 Release: %{release_prefix}%{?dist}.cpanel
 Vendor: cPanel, Inc.
 Group: System Environment/Libraries
@@ -35,7 +35,7 @@ Requires: ea-modsec30
 
 BuildRequires: curl
 BuildRequires: curl-devel
-BuildRequires: GeoIP-devel libxml2 libxml2-devel lzma pcre pcre-devel yajl yajl-devel
+BuildRequires: GeoIP-devel libxml2 libxml2-devel lzma pcre2 pcre2-devel lua lua-devel yajl yajl-devel
 
 %description
 
@@ -107,6 +107,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0600,root,root) %config(noreplace) /etc/apache2/conf.d/modsec/modsec2.user.conf
 
 %changelog
+* Tue May 19 2026 Cory McIntire <cory.mcintire@webpros.com> - 0.0.9beta1-11
+- EA-13435: Add pcre2-devel and lua-devel BuildRequires; ModSecurity 3.0.15 links against PCRE2 and Lua transitively
+
 * Mon Nov 03 2025 Chris Castillo <chris.castillo@webpros.com> - 0.0.9beta1-10
 - EA4-163: Fix libxml2 library linking issues
 
