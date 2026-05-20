@@ -5,7 +5,7 @@ Summary: WARNING: cPanel v92 or later ONLY - Apache 2.4 connector for ModSecurit
 # the path in %setup needs manually updated since it has a hyphen, should go away once its not alpha/beta
 Version: 0.0.9beta1
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4544 for more details
-%define release_prefix 11
+%define release_prefix 12
 Release: %{release_prefix}%{?dist}.cpanel
 Vendor: cPanel, Inc.
 Group: System Environment/Libraries
@@ -31,11 +31,17 @@ Requires: ea-modsec30
 # TODO: ZC-7519
 # BuildRequires: ea-libcurl
 # BuildRequires: ea-libcurl-devel
-# BuildRequires: ea-libxml2[-devel]
 
 BuildRequires: curl
 BuildRequires: curl-devel
-BuildRequires: GeoIP-devel libxml2 libxml2-devel lzma pcre2 pcre2-devel lua lua-devel yajl yajl-devel
+BuildRequires: GeoIP-devel lzma pcre2 pcre2-devel lua lua-devel yajl yajl-devel
+
+%if 0%{?rhel} == 7
+BuildRequires: ea-libxml2 ea-libxml2-devel
+Requires: ea-libxml2
+%else
+BuildRequires: libxml2 libxml2-devel
+%endif
 
 %description
 
@@ -54,10 +60,16 @@ The ModSecurity-apache connector is the connection point between
 # TODO: ZC-7519
 # export LDFLAGS="-L/opt/cpanel/libcurl/lib64/ -L/opt/cpanel/ea-libxml2/lib64/"
 
+%if 0%{?rhel} == 7
 export LDFLAGS="$LDFLAGS \
+    -L/opt/cpanel/ea-libxml2/lib \
+    -L/opt/cpanel/ea-libxml2/lib64 \
     -Wl,--enable-new-dtags \
     -Wl,-rpath,/opt/cpanel/ea-libxml2/lib \
     -Wl,-rpath,/opt/cpanel/ea-libxml2/lib64"
+%else
+export LDFLAGS="$LDFLAGS -Wl,--enable-new-dtags"
+%endif
 
 ./autogen.sh
 ./configure --with-libmodsecurity=/opt/cpanel/ea-modsec30
@@ -107,6 +119,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0600,root,root) %config(noreplace) /etc/apache2/conf.d/modsec/modsec2.user.conf
 
 %changelog
+* Wed May 20 2026 Cory McIntire <cory.mcintire@webpros.com> - 0.0.9beta1-12
+- EA-13435: Fix libxml2.so.16 link failure with ea-modsec30 3.0.15: use ea-libxml2 on C7 and upstream libxml2 on C8+/Ubuntu (conditional BuildRequires, Requires, and LDFLAGS)
+
 * Tue May 19 2026 Cory McIntire <cory.mcintire@webpros.com> - 0.0.9beta1-11
 - EA-13435: Add pcre2-devel and lua-devel BuildRequires; ModSecurity 3.0.15 links against PCRE2 and Lua transitively
 
