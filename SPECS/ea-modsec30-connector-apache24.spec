@@ -6,7 +6,7 @@ Summary: WARNING: cPanel v92 or later ONLY - Apache 2.4 connector for ModSecurit
 # the path in %setup needs manually updated since it has a hyphen, should go away once its not alpha/beta
 Version: 0.0.9beta1
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4544 for more details
-%define release_prefix 15
+%define release_prefix 16
 Release: %{release_prefix}%{?dist}.cpanel
 Vendor: cPanel, Inc.
 Group: System Environment/Libraries
@@ -37,7 +37,7 @@ BuildRequires: curl
 BuildRequires: curl-devel
 
 %if 0%{?rhel} > 0 && 0%{?rhel} < 9
-BuildRequires: ea-libxml2 ea-libxml2-devel
+BuildRequires: ea-libxml2 ea-libxml2-devel patchelf
 Requires: ea-libxml2
 %else
 BuildRequires: libxml2 libxml2-devel
@@ -63,14 +63,9 @@ The ModSecurity-apache connector is the connection point between
 # export LDFLAGS="-L/opt/cpanel/libcurl/lib64/ -L/opt/cpanel/ea-libxml2/lib64/"
 
 %if 0%{?rhel} > 0 && 0%{?rhel} < 9
-# --as-needed prevents libxml2.so.16 from landing in mod_security3.so's NEEDED section.
-# The connector does not call libxml2 directly; libmodsecurity owns that dep and resolves
-# it via its own RPATH. Without --as-needed, libtool over-links libxml2 into the connector
-# but drops our -rpath additions, leaving an unresolvable direct dep at runtime on el7/el8.
 export LDFLAGS="$LDFLAGS \
     -L/opt/cpanel/ea-libxml2/lib \
-    -L/opt/cpanel/ea-libxml2/lib64 \
-    -Wl,--as-needed"
+    -L/opt/cpanel/ea-libxml2/lib64"
 %endif
 
 ./autogen.sh
@@ -85,6 +80,13 @@ make DESTDIR=$RPM_BUILD_ROOT install
 
 mkdir -p $RPM_BUILD_ROOT/etc/apache2/modules
 /bin/cp -rf ./src/.libs/mod_security3.so $RPM_BUILD_ROOT/etc/apache2/modules/mod_security3.so
+
+%if 0%{?rhel} > 0 && 0%{?rhel} < 9
+# APR's libtool wrapper ignores LDFLAGS so our -rpath additions never reach the linker.
+# Force the ea-libxml2 path into the binary's RPATH directly.
+patchelf --set-rpath '/opt/cpanel/ea-modsec30/lib:/opt/cpanel/ea-libxml2/lib64' \
+    $RPM_BUILD_ROOT/etc/apache2/modules/mod_security3.so
+%endif
 
 mkdir -p $RPM_BUILD_ROOT/etc/apache2/conf.modules.d
 /bin/cp -rf %{SOURCE1} $RPM_BUILD_ROOT/etc/apache2/conf.modules.d/800-mod_security30.conf
@@ -121,6 +123,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0600,root,root) %config(noreplace) /etc/apache2/conf.d/modsec/modsec2.user.conf
 
 %changelog
+* Wed May 20 2026 Cory McIntire <cory.mcintire@webpros.com> - 0.0.9beta1-16
+- EA-13435: Use patchelf in %install to force ea-libxml2 into mod_security3.so RPATH; APR libtool wrapper ignores LDFLAGS so -rpath additions never reach the linker
+
 * Wed May 20 2026 Cory McIntire <cory.mcintire@webpros.com> - 0.0.9beta1-15
 - EA-13435: Fix libxml2.so.16 unresolvable direct dep: use --as-needed so the connector does not over-link libxml2 (libmodsecurity owns that dep via its own RPATH); add %undefine __brp_remove_rpath
 
