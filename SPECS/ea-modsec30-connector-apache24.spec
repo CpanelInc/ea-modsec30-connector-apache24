@@ -124,10 +124,10 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Wed May 20 2026 Cory McIntire <cory.mcintire@webpros.com> - 0.0.9beta1-16
-- EA-13435: Use patchelf in %install to force ea-libxml2 into mod_security3.so RPATH; APR libtool wrapper ignores LDFLAGS so -rpath additions never reach the linker
+- EA-13435: Use patchelf in install section to force ea-libxml2 into mod_security3.so RPATH; APR libtool wrapper ignores LDFLAGS so -rpath additions never reach the linker
 
 * Wed May 20 2026 Cory McIntire <cory.mcintire@webpros.com> - 0.0.9beta1-15
-- EA-13435: Fix libxml2.so.16 unresolvable direct dep: use --as-needed so the connector does not over-link libxml2 (libmodsecurity owns that dep via its own RPATH); add %undefine __brp_remove_rpath
+- EA-13435: Fix libxml2.so.16 unresolvable direct dep: use --as-needed so the connector does not over-link libxml2 (libmodsecurity owns that dep via its own RPATH); add undefine brp_remove_rpath
 
 * Wed May 20 2026 Cory McIntire <cory.mcintire@webpros.com> - 0.0.9beta1-14
 - EA-13435: Use DT_RPATH (drop --enable-new-dtags) and ea-libxml2 on el7/el8; expand from C7-only to el7+el8; glibc 2.17 (el7) does not honor DT_RUNPATH for dlopen-loaded modules
