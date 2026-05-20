@@ -124,22 +124,11 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Wed May 20 2026 Cory McIntire <cory.mcintire@webpros.com> - 0.0.9beta1-16
-- EA-13435: Use patchelf in install section to force ea-libxml2 into mod_security3.so RPATH; APR libtool wrapper ignores LDFLAGS so -rpath additions never reach the linker
-
-* Wed May 20 2026 Cory McIntire <cory.mcintire@webpros.com> - 0.0.9beta1-15
-- EA-13435: Fix libxml2.so.16 unresolvable direct dep: use --as-needed so the connector does not over-link libxml2 (libmodsecurity owns that dep via its own RPATH); add undefine brp_remove_rpath
-
-* Wed May 20 2026 Cory McIntire <cory.mcintire@webpros.com> - 0.0.9beta1-14
-- EA-13435: Use DT_RPATH (drop --enable-new-dtags) and ea-libxml2 on el7/el8; expand from C7-only to el7+el8; glibc 2.17 (el7) does not honor DT_RUNPATH for dlopen-loaded modules
-
-* Wed May 20 2026 Cory McIntire <cory.mcintire@webpros.com> - 0.0.9beta1-13
-- EA-13435: Fix libxml2.so.16 load failure: add Requires ea-libxml2 on C7 only; do not direct-link connector to libxml2 (libmodsecurity owns that dep via its own RPATH)
-
-* Wed May 20 2026 Cory McIntire <cory.mcintire@webpros.com> - 0.0.9beta1-12
-- EA-13435: Fix libxml2.so.16 link failure with ea-modsec30 3.0.15: use ea-libxml2 on C7 and upstream libxml2 on C8+/Ubuntu (conditional BuildRequires, Requires, and LDFLAGS)
-
-* Tue May 19 2026 Cory McIntire <cory.mcintire@webpros.com> - 0.0.9beta1-11
-- EA-13435: Add pcre2-devel and lua-devel BuildRequires; ModSecurity 3.0.15 links against PCRE2 and Lua transitively
+- EA-13435: Fix libxml2.so.16 runtime load failure introduced by ea-modsec30 3.0.15 (new SONAME)
+- EA-13435: Use ea-libxml2 on el7/el8 (BuildRequires, Requires, conditional LDFLAGS)
+- EA-13435: Add pcre2-devel and lua-devel BuildRequires for modsec 3.0.15 transitive deps
+- EA-13435: Use patchelf in install to embed ea-libxml2 path in mod_security3.so RPATH (APR libtool ignores LDFLAGS at link time)
+- EA-13435: Add undefine brp_remove_rpath to preserve embedded RPATH
 
 * Mon Nov 03 2025 Chris Castillo <chris.castillo@webpros.com> - 0.0.9beta1-10
 - EA4-163: Fix libxml2 library linking issues
