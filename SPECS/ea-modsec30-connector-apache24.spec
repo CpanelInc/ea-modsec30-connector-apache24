@@ -5,7 +5,7 @@ Summary: WARNING: cPanel v92 or later ONLY - Apache 2.4 connector for ModSecurit
 # the path in %setup needs manually updated since it has a hyphen, should go away once its not alpha/beta
 Version: 0.0.9beta1
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4544 for more details
-%define release_prefix 13
+%define release_prefix 14
 Release: %{release_prefix}%{?dist}.cpanel
 Vendor: cPanel, Inc.
 Group: System Environment/Libraries
@@ -28,18 +28,21 @@ AutoReq:   no
 BuildRequires: ea-modsec30 ea-apache24-devel
 Requires: ea-modsec30
 
-%if 0%{?rhel} == 7
-Requires: ea-libxml2
-%endif
-
 # TODO: ZC-7519
 # BuildRequires: ea-libcurl
 # BuildRequires: ea-libcurl-devel
-# BuildRequires: ea-libxml2[-devel]
 
 BuildRequires: curl
 BuildRequires: curl-devel
-BuildRequires: GeoIP-devel libxml2 libxml2-devel lzma pcre2 pcre2-devel lua lua-devel yajl yajl-devel
+
+%if 0%{?rhel} > 0 && 0%{?rhel} < 9
+BuildRequires: ea-libxml2 ea-libxml2-devel
+Requires: ea-libxml2
+%else
+BuildRequires: libxml2 libxml2-devel
+%endif
+
+BuildRequires: GeoIP-devel lzma pcre2 pcre2-devel lua lua-devel yajl yajl-devel
 
 %description
 
@@ -58,10 +61,17 @@ The ModSecurity-apache connector is the connection point between
 # TODO: ZC-7519
 # export LDFLAGS="-L/opt/cpanel/libcurl/lib64/ -L/opt/cpanel/ea-libxml2/lib64/"
 
+%if 0%{?rhel} > 0 && 0%{?rhel} < 9
+# Use DT_RPATH (not DT_RUNPATH) so dlopen in Apache resolves ea-libxml2 correctly on el7/el8.
+# --enable-new-dtags sets DT_RUNPATH which glibc 2.17 (el7) does not honor in dlopen context.
 export LDFLAGS="$LDFLAGS \
-    -Wl,--enable-new-dtags \
+    -L/opt/cpanel/ea-libxml2/lib \
+    -L/opt/cpanel/ea-libxml2/lib64 \
     -Wl,-rpath,/opt/cpanel/ea-libxml2/lib \
     -Wl,-rpath,/opt/cpanel/ea-libxml2/lib64"
+%else
+export LDFLAGS="$LDFLAGS -Wl,--enable-new-dtags"
+%endif
 
 ./autogen.sh
 ./configure --with-libmodsecurity=/opt/cpanel/ea-modsec30
@@ -111,6 +121,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0600,root,root) %config(noreplace) /etc/apache2/conf.d/modsec/modsec2.user.conf
 
 %changelog
+* Wed May 20 2026 Cory McIntire <cory.mcintire@webpros.com> - 0.0.9beta1-14
+- EA-13435: Use DT_RPATH (drop --enable-new-dtags) and ea-libxml2 on el7/el8; expand from C7-only to el7+el8; glibc 2.17 (el7) does not honor DT_RUNPATH for dlopen-loaded modules
+
 * Wed May 20 2026 Cory McIntire <cory.mcintire@webpros.com> - 0.0.9beta1-13
 - EA-13435: Fix libxml2.so.16 load failure: add Requires ea-libxml2 on C7 only; do not direct-link connector to libxml2 (libmodsecurity owns that dep via its own RPATH)
 
