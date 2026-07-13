@@ -6,7 +6,7 @@ Summary: WARNING: cPanel v92 or later ONLY - Apache 2.4 connector for ModSecurit
 # the path in %setup needs manually updated since it has a hyphen, should go away once its not alpha/beta
 Version: 0.0.9beta1
 # Doing release_prefix this way for Release allows for OBS-proof versioning, See EA-4544 for more details
-%define release_prefix 16
+%define release_prefix 17
 Release: %{release_prefix}%{?dist}.cpanel
 Vendor: cPanel, Inc.
 Group: System Environment/Libraries
@@ -123,6 +123,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0600,root,root) %config(noreplace) /etc/apache2/conf.d/modsec/modsec2.user.conf
 
 %changelog
+* Mon Jul 13 2026 Cory McIntire <cory.mcintire@webpros.com> - 0.0.9beta1-17
+- EA-13497: Set SecAuditLogDirMode 01733 to match SecAuditLogStorageDir's own sticky+world-writable model, so per-day/time-bucket audit subdirectories stay writable across every mod_ruid2 account UID (requires the companion ea-modsec30 umask(0) fix, EA-13497, to actually take effect)
+
 * Wed May 20 2026 Cory McIntire <cory.mcintire@webpros.com> - 0.0.9beta1-16
 - EA-13435: Fix libxml2.so.16 runtime load failure introduced by ea-modsec30 3.0.15 (new SONAME)
 - EA-13435: Use ea-libxml2 on el7/el8 (BuildRequires, Requires, conditional LDFLAGS)
